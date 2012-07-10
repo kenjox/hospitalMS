@@ -1,0 +1,317 @@
+-- MySQL Administrator dump 1.4
+--
+-- ------------------------------------------------------
+-- Server version	5.1.38-community
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+
+
+--
+-- Create schema baraka
+--
+
+CREATE DATABASE IF NOT EXISTS baraka;
+USE baraka;
+
+--
+-- Definition of table `barakauser`
+--
+
+DROP TABLE IF EXISTS `barakauser`;
+CREATE TABLE `barakauser` (
+  `UserID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `Password` varchar(32) NOT NULL,
+  `UserName` varchar(45) NOT NULL,
+  `LastLogin` datetime NOT NULL,
+  `NoOfLogins` varchar(45) NOT NULL,
+  `DateEntered` date NOT NULL,
+  `LoggedIn` tinyint(1) NOT NULL,
+  `Dormain` varchar(45) NOT NULL,
+  PRIMARY KEY (`UserID`),
+  UNIQUE KEY `Index_UserName` (`UserName`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `barakauser`
+--
+
+/*!40000 ALTER TABLE `barakauser` DISABLE KEYS */;
+INSERT INTO `barakauser` (`UserID`,`Password`,`UserName`,`LastLogin`,`NoOfLogins`,`DateEntered`,`LoggedIn`,`Dormain`) VALUES 
+ (1,'kk','kk','2010-01-02 00:00:00','3/3/2010','2010-02-01',0,'Teacher');
+/*!40000 ALTER TABLE `barakauser` ENABLE KEYS */;
+
+
+--
+-- Definition of table `barakauserpriviledges`
+--
+
+DROP TABLE IF EXISTS `barakauserpriviledges`;
+CREATE TABLE `barakauserpriviledges` (
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `UserID` int(10) unsigned NOT NULL,
+  `Priviledge` varchar(100) NOT NULL,
+  `DateEnetered` date NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `FK_UserPriviledges_User` (`UserID`),
+  CONSTRAINT `FK_UserPriviledges_User` FOREIGN KEY (`UserID`) REFERENCES `barakauser` (`UserID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `barakauserpriviledges`
+--
+
+/*!40000 ALTER TABLE `barakauserpriviledges` DISABLE KEYS */;
+/*!40000 ALTER TABLE `barakauserpriviledges` ENABLE KEYS */;
+
+
+--
+-- Definition of table `classroom`
+--
+
+DROP TABLE IF EXISTS `classroom`;
+CREATE TABLE `classroom` (
+  `ClassID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `ClassName` varchar(45) NOT NULL,
+  `DateEntered` date NOT NULL,
+  `ClassTeacher` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`ClassID`),
+  KEY `FK_classroom_teacher` (`ClassTeacher`),
+  CONSTRAINT `FK_classroom_teacher` FOREIGN KEY (`ClassTeacher`) REFERENCES `teacher` (`TeacherID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `classroom`
+--
+
+/*!40000 ALTER TABLE `classroom` DISABLE KEYS */;
+/*!40000 ALTER TABLE `classroom` ENABLE KEYS */;
+
+
+--
+-- Definition of table `exam`
+--
+
+DROP TABLE IF EXISTS `exam`;
+CREATE TABLE `exam` (
+  `ExamID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `ExamType` varchar(45) NOT NULL,
+  `SubjectID` int(10) unsigned NOT NULL,
+  `ClassID` int(10) unsigned NOT NULL,
+  `ExamName` varchar(45) NOT NULL,
+  `MarksOutOf` double NOT NULL,
+  `DateExamined` datetime NOT NULL,
+  `DateEntered` date NOT NULL,
+  `PaperPrepared` varchar(200) NOT NULL,
+  `FinalMarksPercentage` double NOT NULL,
+  PRIMARY KEY (`ExamID`),
+  KEY `FK_exam_subject` (`SubjectID`),
+  KEY `FK_exam_class` (`ClassID`),
+  CONSTRAINT `FK_exam_class` FOREIGN KEY (`ClassID`) REFERENCES `classroom` (`ClassID`),
+  CONSTRAINT `FK_exam_subject` FOREIGN KEY (`SubjectID`) REFERENCES `subject` (`SubjectID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `exam`
+--
+
+/*!40000 ALTER TABLE `exam` DISABLE KEYS */;
+/*!40000 ALTER TABLE `exam` ENABLE KEYS */;
+
+
+--
+-- Definition of table `examentries`
+--
+
+DROP TABLE IF EXISTS `examentries`;
+CREATE TABLE `examentries` (
+  `ExamEntryID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `Marks` double NOT NULL,
+  `PupilID` int(10) unsigned NOT NULL,
+  `ExamID` int(10) unsigned NOT NULL,
+  `DateEntered` date NOT NULL,
+  PRIMARY KEY (`ExamEntryID`),
+  KEY `FK_examentries_pupil` (`PupilID`),
+  KEY `FK_examentries_exam` (`ExamID`),
+  CONSTRAINT `FK_examentries_exam` FOREIGN KEY (`ExamID`) REFERENCES `exam` (`ExamID`),
+  CONSTRAINT `FK_examentries_pupil` FOREIGN KEY (`PupilID`) REFERENCES `pupil` (`AdmissionNo`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `examentries`
+--
+
+/*!40000 ALTER TABLE `examentries` DISABLE KEYS */;
+/*!40000 ALTER TABLE `examentries` ENABLE KEYS */;
+
+
+--
+-- Definition of table `guardian`
+--
+
+DROP TABLE IF EXISTS `guardian`;
+CREATE TABLE `guardian` (
+  `GuardianNo` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `Title` varchar(45) NOT NULL,
+  `FName` varchar(45) NOT NULL,
+  `SecName` varchar(45) NOT NULL,
+  `SurName` varchar(45) NOT NULL,
+  `Relationship` varchar(45) NOT NULL,
+  `MaritalStatus` varchar(45) NOT NULL,
+  `MobilePhone` varchar(45) NOT NULL,
+  `TelephoneNo` varchar(45) NOT NULL,
+  `Email` varchar(45) NOT NULL,
+  `ResidentialArea` varchar(45) NOT NULL,
+  `ResidentialAddress` varchar(45) NOT NULL,
+  `City` varchar(45) NOT NULL,
+  `Provice` varchar(45) NOT NULL,
+  PRIMARY KEY (`GuardianNo`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `guardian`
+--
+
+/*!40000 ALTER TABLE `guardian` DISABLE KEYS */;
+INSERT INTO `guardian` (`GuardianNo`,`Title`,`FName`,`SecName`,`SurName`,`Relationship`,`MaritalStatus`,`MobilePhone`,`TelephoneNo`,`Email`,`ResidentialArea`,`ResidentialAddress`,`City`,`Provice`) VALUES 
+ (3,'Mr','John','Tucker','Smith','Father','Married','3800832','3434564','k@yahoo.com','Koma','Koma','Nai','Nai'),
+ (4,'Mr','Jay','Mambo','Kambeo','Brother','Married','223312723','2383273','k@gmail.com','Komarock','Eastlands','Nairobi','Nairobi'),
+ (5,'Mr','Julius','Kamau','Gatanga','Father','Married','223312723','2383273','k@gmail.com','Komarock','Eastlands','Nairobi','Nairobi'),
+ (6,'Mr','Collins','Jim','Kimathi','Father','Married','223312723','2383273','k@gmail.com','Murang\'a','Eastlands','Nairobi','Nairobi'),
+ (7,'Mr','Oliver','Kibet','Ole','Father','Married','223312723','2383273','k@gmail.com','Murang\'a','Thika','Nairobi','Nairobi'),
+ (8,'Miss','Estar','Cushny','Mukewa','Father','Married','223312723','2383273','k@gmail.com','Murang\'a','Thika','Nairobi','Nairobi'),
+ (9,'Mr','James','Mushi','Mcoasti','Father','Married','223312723','2383273','k@gmail.com','Murang\'a','Thika','Nairobi','Nairobi'),
+ (10,'Mr','James','Mukuya','Mulimbo','Father','Married','223312723','2383273','k@gmail.com','Murang\'a','Thika','Nairobi','Nairobi'),
+ (11,'Mrs','Winnie','Monda','Moige','Mother','Married','223312723','2383273','k@gmail.com','Kisii','Nyaribarichache','Nairobi','Nairobi');
+/*!40000 ALTER TABLE `guardian` ENABLE KEYS */;
+
+
+--
+-- Definition of table `pupil`
+--
+
+DROP TABLE IF EXISTS `pupil`;
+CREATE TABLE `pupil` (
+  `AdmissionNo` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `FirstName` varchar(45) NOT NULL,
+  `MiddleName` varchar(45) NOT NULL,
+  `SurName` varchar(45) NOT NULL,
+  `DateOfBirth` date NOT NULL,
+  `GuadianNo` int(10) unsigned NOT NULL,
+  `ClassFirstAdmitted` int(10) unsigned NOT NULL,
+  `CurrentClass` int(10) unsigned NOT NULL,
+  `DateAdmitted` date NOT NULL,
+  PRIMARY KEY (`AdmissionNo`),
+  KEY `FK_pupil_guardian` (`GuadianNo`),
+  CONSTRAINT `FK_pupil_guardian` FOREIGN KEY (`GuadianNo`) REFERENCES `guardian` (`GuardianNo`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `pupil`
+--
+
+/*!40000 ALTER TABLE `pupil` DISABLE KEYS */;
+INSERT INTO `pupil` (`AdmissionNo`,`FirstName`,`MiddleName`,`SurName`,`DateOfBirth`,`GuadianNo`,`ClassFirstAdmitted`,`CurrentClass`,`DateAdmitted`) VALUES 
+ (3,'Ian','Nes','Mukewa','1990-02-03',3,1,1,'2009-02-03'),
+ (4,'Ian','Kamanda','Kamau','2010-04-24',3,1,1,'2010-04-24'),
+ (5,'Jim','Jones','Kimunya','2010-04-24',3,2,3,'2010-04-24'),
+ (6,'Kamau','wa','Kamau','2010-04-24',3,2,3,'2010-04-24'),
+ (7,'Onesmus','Mukewa','Wekalao','2010-04-24',3,2,3,'2010-04-24'),
+ (8,'Judith','Wangeci','Wayua','2010-04-24',3,2,3,'2010-04-24'),
+ (9,'Charlene','Migwe','Nyambura','2010-04-24',3,2,3,'2010-04-24'),
+ (10,'Crispin','Oduor','Odumbe','2010-04-24',3,2,3,'2010-04-24');
+/*!40000 ALTER TABLE `pupil` ENABLE KEYS */;
+
+
+--
+-- Definition of table `subject`
+--
+
+DROP TABLE IF EXISTS `subject`;
+CREATE TABLE `subject` (
+  `SubjectID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `Subject` varchar(45) NOT NULL,
+  `DateEntered` date NOT NULL,
+  PRIMARY KEY (`SubjectID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `subject`
+--
+
+/*!40000 ALTER TABLE `subject` DISABLE KEYS */;
+/*!40000 ALTER TABLE `subject` ENABLE KEYS */;
+
+
+--
+-- Definition of table `teacher`
+--
+
+DROP TABLE IF EXISTS `teacher`;
+CREATE TABLE `teacher` (
+  `TeacherID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `TeachingLevel` varchar(45) NOT NULL,
+  `QualificationFrom` varchar(45) NOT NULL,
+  `SchoolRank` varchar(45) NOT NULL,
+  `Resume` varchar(200) NOT NULL,
+  `Qualifications` varchar(2000) NOT NULL,
+  `DateEmployed` date NOT NULL,
+  `FName` varchar(45) NOT NULL,
+  `SecName` varchar(45) NOT NULL,
+  `SurName` varchar(45) NOT NULL,
+  `DateEntered` date NOT NULL,
+  PRIMARY KEY (`TeacherID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `teacher`
+--
+
+/*!40000 ALTER TABLE `teacher` DISABLE KEYS */;
+/*!40000 ALTER TABLE `teacher` ENABLE KEYS */;
+
+
+--
+-- Definition of table `teacher_class_allocation`
+--
+
+DROP TABLE IF EXISTS `teacher_class_allocation`;
+CREATE TABLE `teacher_class_allocation` (
+  `TCA_ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `SubjectID` int(10) unsigned NOT NULL,
+  `ClassID` int(10) unsigned NOT NULL,
+  `TeacherID` int(10) unsigned NOT NULL,
+  `DateEntered` date NOT NULL,
+  PRIMARY KEY (`TCA_ID`),
+  KEY `FK_teacher_class_allocation_Subject` (`SubjectID`),
+  KEY `FK_teacher_class_allocation_class` (`ClassID`),
+  KEY `FK_teacher_class_allocation_teacher` (`TeacherID`),
+  CONSTRAINT `FK_teacher_class_allocation_class` FOREIGN KEY (`ClassID`) REFERENCES `classroom` (`ClassID`),
+  CONSTRAINT `FK_teacher_class_allocation_Subject` FOREIGN KEY (`SubjectID`) REFERENCES `subject` (`SubjectID`),
+  CONSTRAINT `FK_teacher_class_allocation_teacher` FOREIGN KEY (`TeacherID`) REFERENCES `teacher` (`TeacherID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `teacher_class_allocation`
+--
+
+/*!40000 ALTER TABLE `teacher_class_allocation` DISABLE KEYS */;
+/*!40000 ALTER TABLE `teacher_class_allocation` ENABLE KEYS */;
+
+
+
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
